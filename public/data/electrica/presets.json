@@ -1,0 +1,39 @@
+{
+  "presets": [
+    {
+      "id": "monoambiente",
+      "nombre": "Monoambiente",
+      "sistema": "monofasico_230",
+      "circuitos": [
+        { "nombre": "Iluminación", "tipoId": "iluminacion", "ambiente": "General", "longitud_m": 20, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 250, "pf": 0.95, "simultaneidad": 1 },
+        { "nombre": "Tomas Generales", "tipoId": "tug", "ambiente": "General", "longitud_m": 22, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 1200, "pf": 0.9, "simultaneidad": 0.6 },
+        { "nombre": "Baño", "tipoId": "tug", "ambiente": "Baño", "longitud_m": 18, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 600, "pf": 0.9, "simultaneidad": 0.6 }
+      ]
+    },
+    {
+      "id": "depto_2amb",
+      "nombre": "Depto 2 ambientes",
+      "sistema": "monofasico_230",
+      "circuitos": [
+        { "nombre": "Iluminación", "tipoId": "iluminacion", "ambiente": "General", "longitud_m": 28, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 350, "pf": 0.95, "simultaneidad": 1 },
+        { "nombre": "Tomas Dormitorio", "tipoId": "tug", "ambiente": "Dormitorio", "longitud_m": 24, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 900, "pf": 0.9, "simultaneidad": 0.6 },
+        { "nombre": "Tomas Living", "tipoId": "tug", "ambiente": "Living", "longitud_m": 26, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 1200, "pf": 0.9, "simultaneidad": 0.6 },
+        { "nombre": "Cocina (tomas)", "tipoId": "toma_especial", "ambiente": "Cocina", "longitud_m": 20, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 2200, "pf": 0.9, "simultaneidad": 0.7 }
+      ]
+    },
+    {
+      "id": "casa_2plantas",
+      "nombre": "Casa 2 plantas",
+      "sistema": "monofasico_230",
+      "circuitos": [
+        { "nombre": "Iluminación PB", "tipoId": "iluminacion", "ambiente": "Planta Baja", "longitud_m": 30, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 400, "pf": 0.95, "simultaneidad": 1 },
+        { "nombre": "Iluminación PA", "tipoId": "iluminacion", "ambiente": "Planta Alta", "longitud_m": 34, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 400, "pf": 0.95, "simultaneidad": 1 },
+        { "nombre": "Tomas PB", "tipoId": "tug", "ambiente": "Planta Baja", "longitud_m": 28, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 1500, "pf": 0.9, "simultaneidad": 0.6 },
+        { "nombre": "Tomas PA", "tipoId": "tug", "ambiente": "Planta Alta", "longitud_m": 32, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 1500, "pf": 0.9, "simultaneidad": 0.6 },
+        { "nombre": "Cocina (tomas)", "tipoId": "toma_especial", "ambiente": "Cocina", "longitud_m": 22, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 2500, "pf": 0.9, "simultaneidad": 0.7 },
+        { "nombre": "Aire acondicionado", "tipoId": "toma_especial", "ambiente": "Dormitorios", "longitud_m": 26, "canalizacionId": "embutida", "modo": "potencia", "potencia_w": 1800, "pf": 0.9, "simultaneidad": 0.7 },
+        { "nombre": "Bomba de agua", "tipoId": "fijo_potencia", "ambiente": "Técnico", "longitud_m": 20, "canalizacionId": "a_vista", "modo": "potencia", "potencia_w": 1000, "pf": 0.85, "simultaneidad": 1 }
+      ]
+    }
+  ]
+}

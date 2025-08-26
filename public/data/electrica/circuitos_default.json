@@ -1,0 +1,10 @@
+{
+  "tipos": [
+    { "id": "iluminacion", "nombre": "Iluminación", "caida_max_pct": 3, "seccion_min_mm2": 1.5 },
+    { "id": "tug", "nombre": "Tomacorrientes de uso general", "caida_max_pct": 3, "seccion_min_mm2": 2.5 },
+    { "id": "cocina", "nombre": "Cocina/Horno eléctricos", "caida_max_pct": 3, "seccion_min_mm2": 4 },
+    { "id": "aa", "nombre": "Aire acondicionado", "caida_max_pct": 5, "seccion_min_mm2": 2.5, "motor": true },
+    { "id": "termotanque", "nombre": "Termotanque eléctrico", "caida_max_pct": 3, "seccion_min_mm2": 2.5 },
+    { "id": "bombeo", "nombre": "Bomba de agua", "caida_max_pct": 5, "seccion_min_mm2": 2.5, "motor": true }
+  ]
+}

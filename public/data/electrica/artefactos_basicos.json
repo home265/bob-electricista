@@ -1,0 +1,23 @@
+{
+  "pf_default": 0.9,
+  "iluminacion": [
+    { "id": "lampara_led_9w", "nombre": "Lámpara LED 9 W", "W": 9 },
+    { "id": "panel_led_18w", "nombre": "Panel LED 18 W", "W": 18 },
+    { "id": "tira_led_5m", "nombre": "Tira LED 5 m", "W": 30 }
+  ],
+  "tomas": [
+    { "id": "tug_liviano", "nombre": "Uso general liviano", "W": 150 },
+    { "id": "notebook_pc", "nombre": "Notebook/PC", "W": 250 },
+    { "id": "tv", "nombre": "TV", "W": 150 },
+    { "id": "microondas", "nombre": "Microondas", "W": 1200 },
+    { "id": "heladera", "nombre": "Heladera", "W": 200 },
+    { "id": "lavarropas", "nombre": "Lavarropas", "W": 1200 },
+    { "id": "lavavajillas", "nombre": "Lavavajillas", "W": 1400 }
+  ],
+  "fijos": [
+    { "id": "termotanque", "nombre": "Termotanque eléctrico", "W": 2000 },
+    { "id": "cocina_electrica", "nombre": "Cocina/horno eléctrico", "W": 3000 },
+    { "id": "aa_3000", "nombre": "Aire acondicionado 3000 Fr", "W": 1200 },
+    { "id": "bomba_agua", "nombre": "Bomba de agua", "W": 1000 }
+  ]
+}

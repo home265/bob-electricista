@@ -1,0 +1,4 @@
+{
+  "default_terminal": { "I_dn_mA": 30, "tipo": "A", "selectivo": false, "nota": "Todos los circuitos terminales" },
+  "aguas_arriba":     { "I_dn_mA": 300, "tipo": "S", "selectivo": true,  "nota": "Selectivo respecto a 30 mA aguas abajo" }
+}

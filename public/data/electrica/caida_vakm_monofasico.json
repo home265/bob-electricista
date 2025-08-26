@@ -1,0 +1,17 @@
+{
+  "fuente": "AEA 90364-7-770 Tabla 770.15.IV (Ed. 2017) - monofásico, cosφ=0,80",
+  "vakm": [
+    { "seccion_mm2": 1.5, "V_A_km": 26 },
+    { "seccion_mm2": 2.5, "V_A_km": 15 },
+    { "seccion_mm2": 4,   "V_A_km": 10 },
+    { "seccion_mm2": 6,   "V_A_km": 6.5 },
+    { "seccion_mm2": 10,  "V_A_km": 3.8 },
+    { "seccion_mm2": 16,  "V_A_km": 2.4 },
+    { "seccion_mm2": 25,  "V_A_km": 1.6 },
+    { "seccion_mm2": 35,  "V_A_km": 1.2 },
+    { "seccion_mm2": 50,  "V_A_km": 0.8 },
+    { "seccion_mm2": 70,  "V_A_km": 0.6 },
+    { "seccion_mm2": 95,  "V_A_km": 0.5 },
+    { "seccion_mm2": 120, "V_A_km": 0.4 }
+  ]
+}

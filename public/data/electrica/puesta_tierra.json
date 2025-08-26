@@ -1,0 +1,5 @@
+{
+  "ra_max_ohm": 40,
+  "nota": "Medir con método de las tres picas. Mantener cámara de inspección y alejar de puesta a tierra de servicio.",
+  "irams": ["IRAM 2349", "IRAM 2178-1", "IRAM 62266"]
+}

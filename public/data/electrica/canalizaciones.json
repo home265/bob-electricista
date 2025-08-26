@@ -1,0 +1,9 @@
+{
+  "formas": [
+    { "id": "aereo", "nombre": "Aérea (sobre fachada / cablecanal)", "metodo": "B2" },
+    { "id": "embutida", "nombre": "Cañería embutida", "metodo": "B2" },
+    { "id": "a_vista", "nombre": "Cañería a la vista", "metodo": "B2" },
+    { "id": "enterrada_cano", "nombre": "Cañería enterrada", "metodo": "D1" },
+    { "id": "enterrada_directa", "nombre": "Enterrado directo (Sintenax)", "metodo": "D2" }
+  ]
+}
