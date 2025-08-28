@@ -3,14 +3,26 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { newId } from "@/lib/id";
-import { addPartida, getProjectById } from "@/lib/storage";
+import { saveOrUpdateCalculation, getProject } from "@/lib/project/storage";
 import { computeElectrica } from "@/lib/electrica/compute";
 import { getElectricaContext } from "@/lib/electrica/catalogs";
 import type {
-  ElectricaInput, ElectricaOutput, SistemaElectrico, CircuitoIn,
-  Artefactos as ArtefactsType
+  ElectricaInput,
+  ElectricaOutput,
+  SistemaElectrico,
+  CircuitoIn,
+  Artefactos as ArtefactsType,
+  AmpacidadTabla,
+  VAKMTabla,
+  CircuitosDefault,
+  Canalizaciones,
+  TermicasSerie,
+  RCDConfig,
+  PuestaTierraConfig,
 } from "@/lib/electrica/types";
+
 import AyudanteCaida from "@/components/electrica/AyudanteCaida";
+import type { MaterialRow, MaterialUnit } from "@/lib/project/types";
 
 type CanalId = string;
 type TipoCircuitoId = string;
@@ -45,13 +57,28 @@ interface PresetDef {
   circuitos: Array<Omit<CircuitoForm, "id" | "artefactos" | "seccionModo"> & { artefactos?: never; seccionModo?: never }>;
 }
 
+interface AmpacidadEntry { seccion_mm2: number }
+interface TipoDef { id: string; nombre: string; caida_max_pct: number; seccion_min_mm2: number }
+interface Forma { id: string; nombre: string }
+interface ElectricaContext {
+  ampacidad: AmpacidadTabla;
+  vakm_mono: VAKMTabla;
+  circuitosDefault: CircuitosDefault;
+  canalizaciones: Canalizaciones;
+  termicas: TermicasSerie;
+  rcd: RCDConfig;
+  artefactos: ArtefactsType;
+  puestaTierra?: PuestaTierraConfig;
+}
+
+
 export default function ElectricaPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const projectId = params.id;
 
   const [ready, setReady] = useState(false);
-  const [ctx, setCtx] = useState<any>(null);
+  const [ctx, setCtx] = useState<ElectricaContext | null>(null);
 
   const [sistema, setSistema] = useState<SistemaElectrico>("monofasico_230");
   const [circuitos, setCircuitos] = useState<CircuitoForm[]>([
@@ -70,7 +97,7 @@ export default function ElectricaPage() {
   const [alimPf, setAlimPf] = useState(0.9);
 
   useEffect(() => { (async () => {
-    const context = await getElectricaContext();
+    const context = await getElectricaContext() as unknown as ElectricaContext;
     setCtx(context);
     try {
       const resp = await fetch("/data/electrica/presets.json", { cache: "no-store" });
@@ -82,7 +109,12 @@ export default function ElectricaPage() {
     setReady(true);
   })(); }, []);
 
-  useEffect(() => { const prj = getProjectById(projectId); if (!prj) router.replace("/"); }, [projectId, router]);
+  useEffect(() => {
+    (async () => {
+      const prj = await getProject(projectId);
+      if (!prj) router.replace("/proyecto");
+    })();
+  }, [projectId, router]);
 
   function updateCircuito(id: string, patch: Partial<CircuitoForm>) { setCircuitos(cs => cs.map(c => (c.id === id ? { ...c, ...patch } : c))); }
   function addCircuito() {
@@ -129,7 +161,7 @@ export default function ElectricaPage() {
 
   const seccionesDisponibles = useMemo<number[]>(() => {
     if (!ctx) return [];
-    return [...ctx.ampacidad.cobre_termoplastica].map((s: any) => s.seccion_mm2).sort((a: number, b: number) => a - b);
+    return [...ctx.ampacidad.cobre_termoplastica].map((s: AmpacidadEntry) => s.seccion_mm2).sort((a: number, b: number) => a - b);
   }, [ctx]);
 
   const output = useMemo<ElectricaOutput | null>(() => {
@@ -155,36 +187,79 @@ export default function ElectricaPage() {
 
   function handleAddToProject() {
     if (!output) return;
+
     const summary = `Eléctrica • ${circuitos.length} circ • ${sistema === "monofasico_230" ? "Mono 230" : "Tri 400"}${alimOn ? " • Alimentador" : ""}`;
-    const partida = { id: newId("partida"), kind: "electrica" as const, summary, params: { sistema, circuitos }, result: output, bom: output.bom, createdAt: new Date().toISOString() };
-    addPartida(projectId, partida);
-    alert("Partida eléctrica agregada al proyecto.");
+
+    const entrada = {
+      sistema,
+      circuitos: circuitos.map((c) => ({
+        id: c.id,
+        nombre: c.nombre,
+        ambiente: c.ambiente,
+        tipoId: c.tipoId,
+        longitud_m: Number(c.longitud_m || 0),
+        canalizacionId: c.canalizacionId,
+        modo: c.modo,
+        potencia_w: Number(c.potencia_w || 0),
+        artefactos: c.artefactos.map((a) => ({ id: a.articuloId, cantidad: a.cantidad, grupo: a.grupo })),
+        pf: c.pf,
+        simultaneidad: c.simultaneidad,
+        seccion_manual_mm2: c.seccionModo === "manual" ? c.seccionManual_mm2 : undefined,
+      })),
+      alimentador: alimOn
+        ? {
+            habilitar: true,
+            distancia_m: Number(alimDist || 0),
+            canalizacionId: alimCanal,
+            caida_max_pct: Number(alimCaida || 2),
+            demanda_global: Number(alimDemanda || 0.8),
+            pf_global: Number(alimPf || 0.9),
+          }
+        : undefined,
+      opciones: { agrupar_circuitos_por_id30mA: 4, incluir_id_aguas_arriba: true, incluir_conductor_pe: true },
+    };
+
+    const materials: MaterialRow[] = (output.bom ?? []).map((b) => ({
+  label: b.desc,
+  qty: Number(b.qty || 0),
+  unit: (b.unidad ?? "u") as MaterialUnit,
+}));
+
+
+    saveOrUpdateCalculation(projectId, {
+      title: summary,
+      inputs: entrada,
+      outputs: output,
+      materials,
+    }).then(() => {
+      alert("Cálculo de Electricidad guardado en el proyecto.");
+    });
   }
 
   function applyPreset(presetId: string) {
     const p = presets.find(x => x.id === presetId);
     if (!p) return;
     setSistema(p.sistema);
-    setCircuitos(p.circuitos.map((c, i) => ({
+    setCircuitos(p.circuitos.map(() => ({
       id: newId("circ"),
-      nombre: c.nombre,
-      ambiente: c.ambiente ?? "General",
-      tipoId: c.tipoId as any,
-      longitud_m: c.longitud_m,
-      canalizacionId: c.canalizacionId as any,
-      modo: c.modo as any,
-      potencia_w: c.potencia_w ?? 0,
+      nombre: "Circuito",
+      ambiente: "General",
+      tipoId: "tug",
+      longitud_m: 10,
+      canalizacionId: "embutida",
+      modo: "potencia",
+      potencia_w: 0,
       artefactos: [],
-      pf: c.pf,
-      simultaneidad: c.simultaneidad,
+      pf: undefined,
+      simultaneidad: undefined,
       seccionModo: "auto"
     })));
   }
 
   if (!ready || !ctx) return null;
 
-  const tipos = ctx.circuitosDefault.tipos as Array<{ id: string; nombre: string; caida_max_pct: number; seccion_min_mm2: number; }>;
-  const formas = ctx.canalizaciones.formas as Array<{ id: string; nombre: string }>;
+  const tipos: TipoDef[] = ctx.circuitosDefault.tipos;
+  const formas: Forma[] = ctx.canalizaciones.formas;
   const arts: ArtefactsType = ctx.artefactos;
 
   return (
@@ -418,7 +493,7 @@ export default function ElectricaPage() {
                   <tr key={s.id} className="border-t border-[--color-border]">
                     <td className="py-2 pr-4">{(circuitos.find(c => c.id === s.id)?.ambiente) ?? "-"}</td>
                     <td className="py-2 pr-4">{s.nombre || s.id}</td>
-                    <td className="py-2 pr-4">{(ctx.circuitosDefault.tipos as any[]).find(t => t.id === s.tipoId)?.nombre ?? s.tipoId}</td>
+                    <td className="py-2 pr-4">{(tipos.find(t => t.id === s.tipoId)?.nombre) ?? s.tipoId}</td>
                     <td className="py-2 pr-4">{s.V_V}</td>
                     <td className="py-2 pr-4">{s.L_m}</td>
                     <td className="py-2 pr-4">{s.metodo}</td>

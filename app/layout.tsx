@@ -1,44 +1,33 @@
-// app/layout.tsx
+import type { Metadata } from "next";
 import "./globals.css";
-import type { Metadata, Viewport } from "next";
 import RegisterSW from "./register-sw";
+import AppHeader from "@/components/ui/AppHeader";
 
 export const metadata: Metadata = {
-  title: "Instalaciones",
-  description:
-    "Calculadoras de agua, sanitarios, gas y eléctrica. Proyectos con BOM y exportación.",
-  applicationName: "Instalaciones",
-  manifest: "/manifest.webmanifest"
+  title: {
+    default: "Bob Electricista - Calculadora de Proyectos",
+    template: "%s | Bob Electricista",
+  },
+  description: "Cómputo de materiales para instalaciones eléctricas.",
+  applicationName: "Bob Electricista",
+  manifest: "/manifest.webmanifest",
 };
 
-export const viewport: Viewport = {
-  themeColor: "#0E8388",
-  colorScheme: "dark"
-};
+const TABS = [
+  { href: "/proyecto", label: "Proyectos" },
+  { href: "/ayuda", label: "Ayuda" },
+];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <body>
-        {/* Header minimalista común a todas las apps */}
-        <header className="appbar">
-          <a href="/" className="appbar__brand">Instalaciones</a>
-          <nav className="appbar__nav">
-            <a href="/ayuda" className="appbar__link">Ayuda</a>
-            <a href="/offline" className="appbar__link">Offline</a>
-          </nav>
-        </header>
-
-        <main className="container">
-          {children}
-        </main>
-
-        <footer className="footer">
-          <span>© {new Date().getFullYear()} — Calculadoras de obra</span>
-        </footer>
-
-        {/* SW para PWA/offline */}
+    <html lang="es-AR" className="h-full">
+      <body className="min-h-dvh bg-background text-foreground antialiased">
         <RegisterSW />
+        <AppHeader tabs={TABS} />
+        <main className="container py-6 space-y-6">{children}</main>
+        <footer className="container py-8 text-xs text-foreground/60">
+          Funciona offline (PWA)
+        </footer>
       </body>
     </html>
   );
