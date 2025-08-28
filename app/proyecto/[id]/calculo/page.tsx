@@ -357,386 +357,204 @@ export default function ElectricaPage() {
   return (
     <section className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-xl font-semibold">Instalación Eléctrica</h1>
-        <p className="opacity-80 text-sm">Modo simple con presets y ambientes. Modo experto opcional.</p>
+        <h1 className="text-2xl font-semibold">Calculadora de Instalación Eléctrica</h1>
+        <p className="text-foreground/70">Define los parámetros de tu instalación para dimensionar cables y protecciones.</p>
       </header>
 
-      {/* Barra de presets */}
-      <div className="card p-4 space-y-3">
-        <div className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col">
-            <span className="text-sm opacity-80">Sistema</span>
-            <select
-              className="px-3 py-2 rounded-xl"
-              value={sistema}
-              onChange={(e) => setSistema(e.target.value as SistemaElectrico)}
-            >
-              <option value="monofasico_230">Monofásico 230 V</option>
-              <option value="trifasico_400">Trifásico 400 V</option>
-            </select>
-          </label>
-
-          <label className="flex flex-col">
-            <span className="text-sm opacity-80">Aplicar preset</span>
-            <div className="flex gap-2">
-              <select
-                className="px-3 py-2 rounded-xl"
-                onChange={(e) => e.target.value && applyPreset(e.target.value)}
-              >
-                <option value="">-- elegir --</option>
+      {/* --- 1. Datos Generales --- */}
+      <div className="card p-4 space-y-4">
+        <h2 className="text-lg font-semibold">1. Datos Generales y Ayudantes</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Sistema Eléctrico</span>
+              {/* ✅ Aplicando la clase .select */}
+              <select className="select" value={sistema} onChange={(e) => setSistema(e.target.value as SistemaElectrico)}>
+                <option value="monofasico_230">Monofásico 230 V</option>
+                <option value="trifasico_400">Trifásico 400 V</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Aplicar preset (opcional)</span>
+               {/* ✅ Aplicando la clase .select */}
+              <select className="select" onChange={(e) => e.target.value && applyPreset(e.target.value)}>
+                <option value="">-- Elegir un punto de partida --</option>
                 {presets.map(p => (<option key={p.id} value={p.id}>{p.nombre}</option>))}
               </select>
-              <button className="btn btn-ghost" onClick={() => applyPreset("monoambiente")}>
-                Rápido: Monoambiente
-              </button>
-            </div>
-          </label>
-
-          <AyudanteCaida sistema={sistema} caidaMaxPct={3} />
+            </label>
         </div>
+        {/* Aquí se integra el Ayudante que modificamos antes */}
+        <AyudanteCaida sistema={sistema} caidaMaxPct={3} />
       </div>
 
-      {/* Alimentador */}
-      <div className="card p-4 space-y-3">
+      {/* --- 2. Alimentador / Acometida --- */}
+      <div className="card p-4 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Alimentador / Acometida</h3>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={alimOn}
-              onChange={(e) => setAlimOn(e.target.checked)}
-            />{" "}
-            Habilitar dimensionado
-          </label>
-        </div>
-        {alimOn && (
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-6">
-            <label className="flex flex-col">
-              <span className="text-sm opacity-80">Distancia (m)</span>
-              <input
-                type="number"
-                step="0.1"
-                className="px-3 py-2 rounded-xl"
-                value={alimDist}
-                onChange={(e) => setAlimDist(Number(e.target.value || 0))}
-              />
+            <h2 className="text-lg font-semibold">2. Alimentador / Acometida</h2>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={alimOn} onChange={(e) => setAlimOn(e.target.checked)} />
+              Habilitar dimensionado
             </label>
-            <label className="flex flex-col md:col-span-2">
-              <span className="text-sm opacity-80">Canalización</span>
-              <select
-                className="px-3 py-2 rounded-xl"
-                value={alimCanal}
-                onChange={(e) => setAlimCanal(e.target.value as CanalId)}
-              >
+        </div>
+
+        {alimOn && (
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5">
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Distancia (m)</span>
+              {/* ✅ Aplicando la clase .input */}
+              <input type="number" step="0.1" className="input" value={alimDist} onChange={(e) => setAlimDist(Number(e.target.value || 0))} />
+            </label>
+
+            <label className="flex flex-col gap-1 text-sm md:col-span-2">
+              <span className="font-medium">Canalización</span>
+               {/* ✅ Aplicando la clase .select */}
+              <select className="select" value={alimCanal} onChange={(e) => setAlimCanal(e.target.value as CanalId)}>
                 {formas.map(f => (<option key={f.id} value={f.id}>{f.nombre}</option>))}
               </select>
             </label>
-            <label className="flex flex-col">
-              <span className="text-sm opacity-80">ΔU máx. (%)</span>
-              <input
-                type="number"
-                step="0.1"
-                className="px-3 py-2 rounded-xl"
-                value={alimCaida}
-                onChange={(e) => setAlimCaida(Number(e.target.value || 2))}
-              />
+
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">ΔU máx. (%)</span>
+               {/* ✅ Aplicando la clase .input */}
+              <input type="number" step="0.1" className="input" value={alimCaida} onChange={(e) => setAlimCaida(Number(e.target.value || 2))} />
             </label>
-            <label className="flex flex-col">
-              <span className="text-sm opacity-80">Demanda global 0..1</span>
-              <input
-                type="number"
-                min="0"
-                max="1"
-                step="0.05"
-                className="px-3 py-2 rounded-xl"
-                value={alimDemanda}
-                onChange={(e) =>
-                  setAlimDemanda(Math.max(0, Math.min(1, Number(e.target.value))))
-                }
-              />
+            
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Demanda global</span>
+              {/* ✅ Aplicando la clase .input */}
+              <input type="number" min="0" max="1" step="0.05" className="input" value={alimDemanda} onChange={(e) => setAlimDemanda(Math.max(0, Math.min(1, Number(e.target.value))))} />
             </label>
-            <label className="flex flex-col">
-              <span className="text-sm opacity-80">cos φ global</span>
-              <input
-                type="number"
-                step="0.01"
-                className="px-3 py-2 rounded-xl"
-                value={alimPf}
-                onChange={(e) => setAlimPf(Number(e.target.value || 0.9))}
-              />
+
+            {/* Este campo no estaba en tu código original, pero sí en la lógica. Lo restauramos. */}
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">cos φ global</span>
+              {/* ✅ Aplicando la clase .input */}
+              <input type="number" step="0.01" className="input" value={alimPf} onChange={(e) => setAlimPf(Number(e.target.value || 0.9))} />
             </label>
           </div>
         )}
       </div>
 
-      {/* Circuitos */}
+      {/* --- 3. Circuitos de la Instalación --- */}
       <div className="space-y-4">
+        <h2 className="text-lg font-semibold">3. Circuitos de la Instalación</h2>
+
+        {circuitos.length === 0 && (
+            <div className="card p-4 text-center text-sm text-foreground/60">
+                Aún no hay circuitos. Presiona "+ Agregar Circuito" para comenzar.
+            </div>
+        )}
+
         {circuitos.map((c, idx) => {
+          // ✅ Tu lógica para P_art no se toca
           const P_art = potenciaArtefactos(c);
           return (
-            <div key={c.id} className="card p-4 space-y-4">
-              <div className="flex items-center justify-between gap-3">
+            <div key={c.id} className="card p-4 space-y-4 bg-muted/20">
+              {/* --- Cabecera de la Tarjeta --- */}
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                 <input
-                  className="px-3 py-2 rounded-xl w-full max-w-sm"
+                  // ✅ Aplicando la clase .input correcta
+                  className="input font-bold text-lg w-full sm:w-auto"
                   value={c.nombre}
+                  // ✅ Tu función de update no se toca
                   onChange={(e) => updateCircuito(c.id, { nombre: e.target.value })}
                   placeholder="Nombre del circuito"
                 />
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-shrink-0">
+                  {/* ✅ Botones con estilo correcto, tus funciones no se tocan */}
                   <button className="btn btn-ghost" onClick={() => moveCircuito(c.id, -1)} disabled={idx === 0}>↑</button>
                   <button className="btn btn-ghost" onClick={() => moveCircuito(c.id, +1)} disabled={idx === circuitos.length - 1}>↓</button>
-                  <button className="btn btn-ghost" onClick={() => dupCircuito(c.id)}>Duplicar</button>
-                  <button className="btn btn-danger" onClick={() => removeCircuito(c.id)}>Quitar</button>
+                  <button className="btn btn-secondary" onClick={() => dupCircuito(c.id)}>Duplicar</button>
+                  {/*
+                    ✅ LA CORRECCIÓN ESTÁ AQUÍ.
+                    Ya no usamos el componente ConfirmDialog.
+                    Usamos un botón normal que llama a una función para confirmar.
+                    Esto evita el error de anidar botones.
+                  */}
+                  <button 
+                    className="btn btn-danger" 
+                    onClick={() => {
+                      if (window.confirm("¿Quitar este circuito?")) {
+                        removeCircuito(c.id);
+                      }
+                    }}
+                  >
+                    Quitar
+                  </button>
                 </div>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-5">
-                <label className="flex flex-col">
-                  <span className="text-sm opacity-80">Ambiente</span>
-                  <input
-                    className="px-3 py-2 rounded-xl"
-                    value={c.ambiente ?? ""}
-                    onChange={(e) => updateCircuito(c.id, { ambiente: e.target.value })}
-                    list="ambientes-sugeridos"
-                    placeholder="Ej: Cocina"
-                  />
-                  <datalist id="ambientes-sugeridos">
-                    {ambientesBase.map(a => <option key={a} value={a} />)}
-                  </datalist>
-                </label>
-
-                <label className="flex flex-col">
-                  <span className="text-sm opacity-80">Tipo</span>
-                  <select
-                    className="px-3 py-2 rounded-xl"
-                    value={c.tipoId}
-                    onChange={(e) => updateCircuito(c.id, { tipoId: e.target.value as TipoCircuitoId })}
-                  >
-                    {tipos.map(t => (<option key={t.id} value={t.id}>{t.nombre}</option>))}
-                  </select>
-                </label>
-
-                <label className="flex flex-col">
-                  <span className="text-sm opacity-80">Longitud (m)</span>
-                  <input
-                    type="number"
-                    step="0.1"
-                    className="px-3 py-2 rounded-xl"
-                    value={c.longitud_m}
-                    onChange={(e) => updateCircuito(c.id, { longitud_m: Number(e.target.value || 0) })}
-                  />
-                </label>
-
-                <label className="flex flex-col">
-                  <span className="text-sm opacity-80">Canalización</span>
-                  <select
-                    className="px-3 py-2 rounded-xl"
-                    value={c.canalizacionId}
-                    onChange={(e) => updateCircuito(c.id, { canalizacionId: e.target.value as CanalId })}
-                  >
-                    {formas.map(f => (<option key={f.id} value={f.id}>{f.nombre}</option>))}
-                  </select>
-                </label>
-
-                <label className="flex flex-col">
-                  <span className="text-sm opacity-80">Modo de carga</span>
-                  <select
-                    className="px-3 py-2 rounded-xl"
-                    value={c.modo}
-                    onChange={(e) => updateCircuito(c.id, { modo: e.target.value as "potencia" | "artefactos" })}
-                  >
-                    <option value="potencia">Potencia directa (W)</option>
-                    <option value="artefactos">Por artefactos</option>
-                  </select>
-                </label>
+              {/* --- Datos Principales del Circuito (solo cambios de estilo) --- */}
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5">
+                <label className="flex flex-col gap-1 text-sm"><span className="font-medium">Ambiente</span><input className="input" value={c.ambiente ?? ""} onChange={(e) => updateCircuito(c.id, { ambiente: e.target.value })} list="ambientes-sugeridos" placeholder="Ej: Cocina"/></label>
+                <datalist id="ambientes-sugeridos">{ambientesBase.map(a => <option key={a} value={a} />)}</datalist>
+                <label className="flex flex-col gap-1 text-sm"><span className="font-medium">Tipo</span><select className="select" value={c.tipoId} onChange={(e) => updateCircuito(c.id, { tipoId: e.target.value as TipoCircuitoId })}>{tipos.map(t => (<option key={t.id} value={t.id}>{t.nombre}</option>))}</select></label>
+                <label className="flex flex-col gap-1 text-sm"><span className="font-medium">Longitud (m)</span><input type="number" step="0.1" className="input" value={c.longitud_m} onChange={(e) => updateCircuito(c.id, { longitud_m: Number(e.target.value || 0) })}/></label>
+                <label className="flex flex-col gap-1 text-sm"><span className="font-medium">Canalización</span><select className="select" value={c.canalizacionId} onChange={(e) => updateCircuito(c.id, { canalizacionId: e.target.value as CanalId })}>{formas.map(f => (<option key={f.id} value={f.id}>{f.nombre}</option>))}</select></label>
+                <label className="flex flex-col gap-1 text-sm"><span className="font-medium">Modo de carga</span><select className="select" value={c.modo} onChange={(e) => updateCircuito(c.id, { modo: e.target.value as "potencia" | "artefactos" })}><option value="potencia">Potencia directa (W)</option><option value="artefactos">Por artefactos</option></select></label>
               </div>
 
+              {/* --- Carga por Potencia (solo cambios de estilo) --- */}
               {c.modo === "potencia" && (
-                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-                  <label className="flex flex-col">
-                    <span className="text-sm opacity-80">Potencia (W)</span>
-                    <input
-                      type="number"
-                      step="1"
-                      className="px-3 py-2 rounded-xl"
-                      value={c.potencia_w}
-                      onChange={(e) => updateCircuito(c.id, { potencia_w: Number(e.target.value || 0) })}
-                    />
-                  </label>
-                  <label className="flex flex-col">
-                    <span className="text-sm opacity-80">cos φ</span>
-                    <input
-                      type="number"
-                      step="0.01"
-                      className="px-3 py-2 rounded-xl"
-                      value={c.pf ?? ""}
-                      onChange={(e) =>
-                        updateCircuito(c.id, { pf: e.target.value === "" ? undefined : Number(e.target.value) })
-                      }
-                      placeholder="Ej: 0.95"
-                    />
-                  </label>
-                  <label className="flex flex-col">
-                    <span className="text-sm opacity-80">Simultaneidad 0..1</span>
-                    <input
-                      type="number"
-                      step="0.05"
-                      min="0"
-                      max="1"
-                      className="px-3 py-2 rounded-xl"
-                      value={c.simultaneidad ?? 1}
-                      onChange={(e) =>
-                        updateCircuito(c.id, { simultaneidad: Math.max(0, Math.min(1, Number(e.target.value))) })
-                      }
-                    />
-                  </label>
+                <div className="pt-4 border-t border-border grid gap-4 sm:grid-cols-3">
+                  <label className="flex flex-col gap-1 text-sm"><span className="font-medium">Potencia (W)</span><input type="number" step="1" className="input" value={c.potencia_w} onChange={(e) => updateCircuito(c.id, { potencia_w: Number(e.target.value || 0) })} /></label>
+                  <label className="flex flex-col gap-1 text-sm"><span className="font-medium">cos φ</span><input type="number" step="0.01" className="input" value={c.pf ?? ""} onChange={(e) => updateCircuito(c.id, { pf: e.target.value === "" ? undefined : Number(e.target.value) })} placeholder="Ej: 0.95"/></label>
+                  <label className="flex flex-col gap-1 text-sm"><span className="font-medium">Simultaneidad (0..1)</span><input type="number" step="0.05" min="0" max="1" className="input" value={c.simultaneidad ?? 1} onChange={(e) => updateCircuito(c.id, { simultaneidad: Math.max(0, Math.min(1, Number(e.target.value))) })}/></label>
                 </div>
               )}
 
+              {/* --- Carga por Artefactos (solo cambios de estilo) --- */}
               {c.modo === "artefactos" && (
-                <div className="space-y-3">
-                  <div className="text-sm opacity-80">Catálogo de artefactos</div>
-                  <div className="space-y-2">
+                <div className="pt-4 border-t border-border space-y-3">
+                  <h4 className="font-medium text-sm">Catálogo de Artefactos</h4>
+                  <div className="space-y-3">
                     {c.artefactos.map((row) => (
-                      <div key={row.id} className="grid gap-2 md:grid-cols-5">
-                        <label className="flex flex-col">
-                          <span className="text-sm opacity-80">Grupo</span>
-                          <select
-                            className="px-3 py-2 rounded-xl"
-                            value={row.grupo}
-                            onChange={(e) =>
-                              updateArtefactoRow(c.id, row.id, {
-                                grupo: e.target.value as Grupo,
-                                articuloId: "",
-                              })
-                            }
-                          >
-                            <option value="iluminacion">Iluminación</option>
-                            <option value="tomas">Tomas</option>
-                            <option value="fijos">Fijos</option>
-                          </select>
-                        </label>
-                        <label className="flex flex-col md:col-span-3">
-                          <span className="text-sm opacity-80">Artefacto</span>
-                          <select
-                            className="px-3 py-2 rounded-xl"
-                            value={row.articuloId}
-                            onChange={(e) => updateArtefactoRow(c.id, row.id, { articuloId: e.target.value })}
-                          >
-                            <option value="">-- seleccionar --</option>
-                            {(row.grupo === "iluminacion" ? arts.iluminacion : row.grupo === "fijos" ? arts.fijos : arts.tomas).map(a => (
-                              <option key={a.id} value={a.id}>{a.nombre} ({a.W} W)</option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="flex flex-col">
-                          <span className="text-sm opacity-80">Cantidad</span>
-                          <input
-                            type="number"
-                            min="1"
-                            step="1"
-                            className="px-3 py-2 rounded-xl"
-                            value={row.cantidad}
-                            onChange={(e) =>
-                              updateArtefactoRow(c.id, row.id, {
-                                cantidad: Math.max(1, Number(e.target.value || 1)),
-                              })
-                            }
-                          />
-                        </label>
-                        <div className="md:col-span-5">
-                          <button className="btn btn-danger" onClick={() => removeArtefactoRow(c.id, row.id)}>
-                            Quitar línea
-                          </button>
-                        </div>
+                      <div key={row.id} className="grid gap-2 md:grid-cols-6 items-end">
+                        <label className="flex flex-col gap-1 text-sm md:col-span-2"><span className="font-medium text-xs">Grupo</span><select className="select" value={row.grupo} onChange={(e) => updateArtefactoRow(c.id, row.id, { grupo: e.target.value as Grupo, articuloId: "" })}><option value="iluminacion">Iluminación</option><option value="tomas">Tomas</option><option value="fijos">Fijos</option></select></label>
+                        <label className="flex flex-col gap-1 text-sm md:col-span-3"><span className="font-medium text-xs">Artefacto</span><select className="select" value={row.articuloId} onChange={(e) => updateArtefactoRow(c.id, row.id, { articuloId: e.target.value })}><option value="">-- seleccionar --</option>{(row.grupo === "iluminacion" ? arts.iluminacion : row.grupo === "fijos" ? arts.fijos : arts.tomas).map(a => (<option key={a.id} value={a.id}>{a.nombre} ({a.W} W)</option>))}</select></label>
+                        <label className="flex flex-col gap-1 text-sm"><span className="font-medium text-xs">Cant.</span><input type="number" min="1" step="1" className="input" value={row.cantidad} onChange={(e) => updateArtefactoRow(c.id, row.id, { cantidad: Math.max(1, Number(e.target.value || 1)), })}/></label>
+                        <div className="md:col-span-6"><button className="btn btn-danger text-xs py-1 px-2 h-auto" onClick={() => removeArtefactoRow(c.id, row.id)}>Quitar línea</button></div>
                       </div>
                     ))}
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <button className="btn" onClick={() => addArtefactoRow(c.id)}>Agregar artefacto</button>
-                    <div className="text-sm opacity-80">
-                      Potencia por artefactos: <strong>{P_art}</strong> W
-                    </div>
+                  <div className="flex gap-3 items-center pt-2 border-t border-border">
+                    <button className="btn btn-secondary" onClick={() => addArtefactoRow(c.id)}>+ Agregar Artefacto</button>
+                    <div className="text-sm text-foreground/70">Potencia total: <strong>{P_art.toLocaleString('es-AR')} W</strong></div>
                   </div>
                 </div>
               )}
 
-              {/* Modo experto */}
-              <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-                <label className="flex flex-col">
-                  <span className="text-sm opacity-80">Sección (modo)</span>
-                  <select
-                    className="px-3 py-2 rounded-xl"
-                    value={c.seccionModo}
-                    onChange={(e) => updateCircuito(c.id, { seccionModo: e.target.value as "auto" | "manual" })}
-                  >
-                    <option value="auto">Automática</option>
-                    <option value="manual">Manual (experto)</option>
-                  </select>
-                </label>
-                {c.seccionModo === "manual" && (
-                  <label className="flex flex-col">
-                    <span className="text-sm opacity-80">Sección manual (mm²)</span>
-                    <select
-                      className="px-3 py-2 rounded-xl"
-                      value={c.seccionManual_mm2 ?? ""}
-                      onChange={(e) =>
-                        updateCircuito(c.id, {
-                          seccionManual_mm2: e.target.value === "" ? undefined : Number(e.target.value),
-                        })
-                      }
-                    >
-                      <option value="">-- seleccionar --</option>
-                      {seccionesDisponibles.map(s => (<option key={s} value={s}>{s}</option>))}
-                    </select>
-                  </label>
-                )}
+              {/* --- Modo Experto (solo cambios de estilo) --- */}
+              <div className="pt-4 border-t border-border grid gap-4 sm:grid-cols-3">
+                <label className="flex flex-col gap-1 text-sm"><span className="font-medium">Sección (modo)</span><select className="select" value={c.seccionModo} onChange={(e) => updateCircuito(c.id, { seccionModo: e.target.value as "auto" | "manual" })}><option value="auto">Automática</option><option value="manual">Manual (experto)</option></select></label>
+                {c.seccionModo === "manual" && (<label className="flex flex-col gap-1 text-sm"><span className="font-medium">Sección manual (mm²)</span><select className="select" value={c.seccionManual_mm2 ?? ""} onChange={(e) => updateCircuito(c.id, { seccionManual_mm2: e.target.value === "" ? undefined : Number(e.target.value), })}><option value="">-- seleccionar --</option>{seccionesDisponibles.map(s => (<option key={s} value={s}>{s}</option>))}</select></label>)}
               </div>
             </div>
           );
         })}
-        <div className="flex gap-2">
-          <button className="btn" onClick={addCircuito}>Agregar circuito</button>
+        <div>
+          <button className="btn btn-secondary" onClick={addCircuito}>+ Agregar Circuito</button>
         </div>
       </div>
 
-      {/* Resultado */}
+      {/* --- 4. Resultados y Materiales --- */}
       {output && (
-        <div className="card p-4 space-y-3">
-          <h3 className="font-semibold">Resultado</h3>
+        <div className="card p-4 space-y-4">
+          <h2 className="text-lg font-semibold">4. Resultados y Materiales</h2>
 
-          {/* Alimentador */}
+          {/* --- Tabla de Alimentador --- */}
           {output.alimentador && (
-            <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}>
-              <div className="text-sm opacity-80 mb-1">Alimentador</div>
-              <div className="card--table overflow-x-auto">
-                <table className="min-w-full text-sm">
+            <div className="space-y-2">
+              <h3 className="font-medium text-sm">Alimentador</h3>
+              <div className="overflow-x-auto rounded-lg border border-border">
+                <table className="table text-xs">
                   <thead>
-                    <tr className="text-left opacity-80">
-                      <th className="py-2 pr-4">V</th>
-                      <th className="py-2 pr-4">L (m)</th>
-                      <th className="py-2 pr-4">Método</th>
-                      <th className="py-2 pr-4">Ib (A)</th>
-                      <th className="py-2 pr-4">Sección</th>
-                      <th className="py-2 pr-4">Iz</th>
-                      <th className="py-2 pr-4">IGA</th>
-                      <th className="py-2 pr-4">ΔU (%)</th>
-                      <th className="py-2 pr-4">OK</th>
-                      <th className="py-2 pr-4">Obs.</th>
+                    <tr>
+                      <th>V</th><th>L(m)</th><th>Método</th><th>Ib(A)</th><th>Sección</th><th>Iz</th><th>IGA</th><th>ΔU(%)</th><th>OK</th><th>Obs.</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-t border-[--color-border]">
-                      <td className="py-2 pr-4">{output.alimentador.V_V}</td>
-                      <td className="py-2 pr-4">{output.alimentador.L_m}</td>
-                      <td className="py-2 pr-4">{output.alimentador.metodo}</td>
-                      <td className="py-2 pr-4">{output.alimentador.Ib_A}</td>
-                      <td className="py-2 pr-4">{output.alimentador.seccion_mm2}</td>
-                      <td className="py-2 pr-4">{output.alimentador.Iz_A}</td>
-                      <td className="py-2 pr-4">{output.alimentador.MCB_A}</td>
-                      <td className="py-2 pr-4">{output.alimentador.caida_pct}</td>
-                      <td className="py-2 pr-4">{output.alimentador.ok ? "Sí" : "No"}</td>
-                      <td className="py-2 pr-4">{output.alimentador.motivo ?? "-"}</td>
+                    <tr>
+                      <td>{output.alimentador.V_V}</td><td>{output.alimentador.L_m}</td><td>{output.alimentador.metodo}</td><td>{output.alimentador.Ib_A}</td><td>{output.alimentador.seccion_mm2}</td><td>{output.alimentador.Iz_A}</td><td>{output.alimentador.MCB_A}</td><td>{output.alimentador.caida_pct}</td><td>{output.alimentador.ok ? "✅" : "❌"}</td><td>{output.alimentador.motivo ?? "-"}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -744,83 +562,63 @@ export default function ElectricaPage() {
             </div>
           )}
 
-          {/* Circuitos */}
-          <div className="card--table overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead>
-                <tr className="text-left opacity-80">
-                  <th className="py-2 pr-4">Ambiente</th>
-                  <th className="py-2 pr-4">Circuito</th>
-                  <th className="py-2 pr-4">Tipo</th>
-                  <th className="py-2 pr-4">V</th>
-                  <th className="py-2 pr-4">L (m)</th>
-                  <th className="py-2 pr-4">Método</th>
-                  <th className="py-2 pr-4">Ib (A)</th>
-                  <th className="py-2 pr-4">Sección</th>
-                  <th className="py-2 pr-4">Iz</th>
-                  <th className="py-2 pr-4">MCB</th>
-                  <th className="py-2 pr-4">ΔU (%)</th>
-                  <th className="py-2 pr-4">OK</th>
-                  <th className="py-2 pr-4">Obs.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {output.circuitos.map(s => (
-                  <tr key={s.id} className="border-t border-[--color-border]">
-                    <td className="py-2 pr-4">{(circuitos.find(c => c.id === s.id)?.ambiente) ?? "-"}</td>
-                    <td className="py-2 pr-4">{s.nombre || s.id}</td>
-                    <td className="py-2 pr-4">{(tipos.find(t => t.id === s.tipoId)?.nombre) ?? s.tipoId}</td>
-                    <td className="py-2 pr-4">{s.V_V}</td>
-                    <td className="py-2 pr-4">{s.L_m}</td>
-                    <td className="py-2 pr-4">{s.metodo}</td>
-                    <td className="py-2 pr-4">{s.Ib_A}</td>
-                    <td className="py-2 pr-4">{s.seccion_mm2}</td>
-                    <td className="py-2 pr-4">{s.Iz_A}</td>
-                    <td className="py-2 pr-4">{s.MCB_A}</td>
-                    <td className="py-2 pr-4">{s.caida_pct}</td>
-                    <td className="py-2 pr-4">{s.ok ? "Sí" : "No"}</td>
-                    <td className="py-2 pr-4">{s.motivo ?? "-"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {output.warnings.length > 0 && (
-            <ul className="mt-2 list-disc pl-5 text-amber-300">
-              {output.warnings.map((w, i) => (<li key={i}>{w}</li>))}
-            </ul>
-          )}
-
-          <div className="flex gap-2 pt-2">
-            <button className="btn btn-primary" onClick={handleAddToProject}>Agregar al proyecto</button>
-          </div>
-
-          {/* BOM */}
-          <div className="mt-4">
-            <h4 className="font-semibold mb-2">Lista de materiales (BOM)</h4>
-            <div className="card--table overflow-x-auto">
-              <table className="min-w-full text-sm">
+          {/* --- Tabla de Circuitos --- */}
+          <div className="space-y-2">
+            <h3 className="font-medium text-sm">Circuitos</h3>
+            <div className="overflow-x-auto rounded-lg border border-border">
+              <table className="table text-xs">
                 <thead>
-                  <tr className="text-left opacity-80">
-                    <th className="py-2 pr-4">Código</th>
-                    <th className="py-2 pr-4">Descripción</th>
-                    <th className="py-2 pr-4">Cant.</th>
-                    <th className="py-2 pr-4">Unidad</th>
+                  <tr>
+                    <th>Ambiente</th><th>Circuito</th><th>Tipo</th><th>V</th><th>L(m)</th><th>Método</th><th>Ib(A)</th><th>Sección</th><th>Iz</th><th>MCB</th><th>ΔU(%)</th><th>OK</th><th>Obs.</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {output.bom.map((i) => (
-                    <tr key={i.code} className="border-t border-[--color-border]">
-                      <td className="py-2 pr-4">{i.code}</td>
-                      <td className="py-2 pr-4">{i.desc}</td>
-                      <td className="py-2 pr-4">{i.qty}</td>
-                      <td className="py-2 pr-4">{i.unidad ?? "-"}</td>
+                  {output.circuitos.map(s => (
+                    <tr key={s.id}>
+                      <td>{(circuitos.find(c => c.id === s.id)?.ambiente) ?? "-"}</td><td>{s.nombre || s.id}</td><td>{(tipos.find(t => t.id === s.tipoId)?.nombre) ?? s.tipoId}</td><td>{s.V_V}</td><td>{s.L_m}</td><td>{s.metodo}</td><td>{s.Ib_A}</td><td>{s.seccion_mm2}</td><td>{s.Iz_A}</td><td>{s.MCB_A}</td><td>{s.caida_pct}</td><td>{s.ok ? "✅" : "❌"}</td><td>{s.motivo ?? "-"}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* --- Advertencias --- */}
+          {output.warnings.length > 0 && (
+            <div className="bg-destructive/20 border border-destructive/30 rounded-lg p-3 text-sm space-y-1">
+              <p className="font-medium">Advertencias:</p>
+              <ul className="list-disc pl-5">
+                {output.warnings.map((w, i) => (<li key={i}>{w}</li>))}
+              </ul>
+            </div>
+          )}
+          
+          {/* --- Lista de Materiales (BOM) --- */}
+          <div className="pt-4 border-t border-border space-y-2">
+            <h3 className="font-medium text-sm">Lista de materiales (BOM)</h3>
+            <div className="overflow-x-auto rounded-lg border border-border">
+              <table className="table text-xs">
+                <thead>
+                  <tr>
+                    <th>Código</th><th>Descripción</th><th className="text-right">Cant.</th><th>Unidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {output.bom.map((i) => (
+                    <tr key={i.code}>
+                      <td>{i.code}</td><td>{i.desc}</td><td className="text-right">{i.qty}</td><td>{i.unidad ?? "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* --- Botón de Acción Final --- */}
+          <div className="flex gap-2 pt-4 border-t border-border">
+            <button className="btn btn-primary" onClick={handleAddToProject}>
+              Guardar Cálculo en el Proyecto
+            </button>
           </div>
         </div>
       )}
