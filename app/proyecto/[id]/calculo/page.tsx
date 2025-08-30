@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { newId } from "@/lib/id";
-import { saveOrUpdateCalculation, getProject } from "@/lib/project/storage";
+import { saveOrUpdatePartidaByKind, getProject } from "@/lib/project/storage";
 import { computeElectrica } from "@/lib/electrica/compute";
 import { getElectricaContext } from "@/lib/electrica/catalogs";
 import type {
@@ -310,18 +310,22 @@ export default function ElectricaPage() {
     };
 
     const materials: MaterialRow[] = (output.bom ?? []).map((b) => ({
+      key: b.code, // Usamos 'code' como key para una mejor agregación
       label: b.desc,
       qty: Number(b.qty || 0),
       unit: (b.unidad ?? "u") as MaterialUnit,
     }));
 
-    saveOrUpdateCalculation(projectId, {
+    // --- ESTA ES LA LÍNEA QUE CAMBIA ---
+    saveOrUpdatePartidaByKind(projectId, "electricidad", {
       title: summary,
       inputs: entrada,
       outputs: output,
       materials,
     }).then(() => {
       alert("Cálculo de Electricidad guardado en el proyecto.");
+      // Opcional: redirigir al resumen del proyecto después de guardar
+      router.push(`/proyecto/${projectId}`);
     });
   }
 

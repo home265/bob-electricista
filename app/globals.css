@@ -1,40 +1,26 @@
-/* app/globals.css */
+/* app/globals.css (Versión definitiva - Modelo Bob Gasista) */
 @import "tailwindcss/preflight";
 @import "tailwindcss/theme";
 @tailwind utilities;
 
-/* ===== Paleta (igual que Gas) ===== */
+/* ===== Paleta (Modelo: Bob Gasista) ===== */
 :root{
-  --color-primary:   #2C3333;
-  --color-secondary: #2E4F4F;
-  --color-accent:    #0E8388;
-  --color-neutral:   #CBE4DE;
-  --color-base:      #00FFD1;
+  --color-primary:   #2C3333; /* fondo principal */
+  --color-secondary: #2E4F4F; /* barras / tarjetas */
+  --color-accent:    #0E8388; /* botones / foco */
+  --color-neutral:   #CBE4DE; /* texto principal */
+  --color-base:      #00FFD1; /* detalles / énfasis */
 
+  /* Derivados semánticos */
   --background: var(--color-primary);
   --foreground: var(--color-neutral);
-
-  --muted:               color-mix(in oklch, var(--foreground) 10%, transparent);
-  --muted-foreground:    color-mix(in oklch, var(--foreground) 60%, transparent);
-  --popover:             color-mix(in oklch, var(--background) 96%, white);
-  --popover-foreground:  var(--foreground);
-  --card:                color-mix(in oklch, var(--background) 92%, white);
-  --card-foreground:     var(--foreground);
-  --border:              color-mix(in oklch, var(--foreground) 15%, transparent);
-  --input:               var(--border);
-  --primary:             var(--color-accent);
-  --primary-foreground:  white;
-  --secondary:           var(--color-secondary);
-  --secondary-foreground:white;
-  --accent:              var(--color-base);
-  --accent-foreground:   #0B2F2F;
-  --destructive:         #b42318;
-  --destructive-foreground: white;
-  --ring:                var(--accent);
-  --radius:              14px;
+  --card:       #242B2B;
+  --muted:      #202626;
+  --border:     #3A4747;
+  --ring:       var(--color-accent);
 }
 
-/* ===== Tokens Tailwind v4 ===== */
+/* ===== Mapear a tokens de Tailwind v4 ===== */
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -46,137 +32,84 @@
   --color-border:     var(--border);
   --color-ring:       var(--ring);
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-               Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
-               "Segoe UI Emoji";
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-               "Liberation Mono", "Courier New", monospace;
-
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow:    0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-
-  --rounded:   var(--radius);
+  --radius: 14px;
 }
 
 /* ===== Base ===== */
-html, body { height: 100%; }
-body {
-  background: radial-gradient(1200px 800px at 20% -10%, color-mix(in oklch, var(--background) 75%, black), var(--background));
+body{
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  accent-color: var(--accent);
 }
-
-a { color: inherit; text-decoration: none; }
-
-/* ===== Utilidades de impresión ===== */
-@media print {
-  body { background: white; color: #111; }
-  .print-hidden { display: none !important; }
-  .print-only { display: block !important; }
-}
-.print-only { display: none; }
-
-/* ===== Componentes (igual estética Gas) ===== */
 .header {
   background: var(--card);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(6px);
 }
-
-.container {
-  width: 100%;
-  max-width: 80rem;
-  margin-inline: auto;
-  padding-inline: 1rem;
-}
-
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: .5rem; padding: .5rem .75rem; border-radius: 10px;
-  border: 1px solid var(--border);
-  background: color-mix(in oklch, var(--card) 86%, white);
+/* ===== ESTA ES LA REGLA CLAVE QUE FALTABA ===== */
+/* Aplica un estilo base a todos los inputs, selects y textareas */
+input, select, textarea {
+  background: var(--card);
   color: var(--foreground);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: .5rem .75rem;
+  width: 100%;
 }
-.btn:hover { background: color-mix(in oklch, var(--card) 92%, white); }
-.btn:disabled { opacity:.5; pointer-events:none; }
-
-.btn-primary{
-  border-color: color-mix(in oklch, var(--primary) 35%, transparent);
-  background: var(--primary);
-  color: var(--primary-foreground);
-}
-.btn-primary:hover{
-  background: color-mix(in oklch, var(--primary) 88%, black);
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 35%, transparent);
+  border-color: var(--color-ring);
 }
 
-.btn-ghost{
-  background: transparent; border-color: var(--border);
+/* ===== Clases personalizadas (Botones de Bob Gasista) ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .6rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all .2s ease;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  white-space: nowrap;
 }
-.btn-ghost:hover{
-  background: var(--muted);
+.btn:active { 
+  transform: scale(0.98); 
+}
+
+.btn-primary {
+  background: var(--color-accent); 
+  color: #0A1414;
+  border-color: color-mix(in srgb, var(--color-accent) 80%, black);
+}
+.btn-primary:hover { 
+  background: color-mix(in srgb, var(--color-accent) 90%, #fff 10%); 
+}
+
+.btn-secondary {
+  background: var(--color-secondary); 
+  color: var(--color-neutral);
+}
+.btn-secondary:hover { 
+  background: color-mix(in srgb, var(--color-secondary) 85%, #000 15%);
+  border-color: var(--color-accent);
+}
+
+.btn-danger {
+  background: #4a1e1e;
+  color: #fecaca;
+  border-color: #991B1B;
+}
+.btn-danger:hover { 
+  background: #991B1B;
+  color: #fff;
 }
 
 .card{
   background: var(--card);
-  color: var(--foreground);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-.table{
-  width: 100%;
-  border-collapse: collapse;
-}
-.table th, .table td{ border-bottom:1px solid var(--border); padding:.5rem .75rem; }
-.table thead th{ background: color-mix(in oklch, var(--card) 70%, white); font-weight: 600; }
-.table tr:nth-child(even){ background: color-mix(in oklch, var(--card) 94%, white); }
-
-.badge{
-  display:inline-flex; align-items:center; gap:.375rem;
-  padding:.125rem .5rem; border-radius:999px;
-  background: color-mix(in oklch, var(--accent) 12%, transparent);
-  border: 1px solid color-mix(in oklch, var(--accent) 35%, transparent);
-  color: color-mix(in oklch, var(--accent-foreground) 85%, black);
-}
-
-.input, .select, .textarea{
-  width:100%;
-  border:1px solid var(--border); border-radius: 10px;
-  background: color-mix(in oklch, var(--card) 88%, white);
-  color: var(--foreground);
-  padding:.5rem .75rem;
-}
-.input:focus, .select:focus, .textarea:focus{
-  outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 25%, transparent);
-  border-color: color-mix(in oklch, var(--ring) 45%, transparent);
-}
-
-/* Helpers */
-.text-muted { color: var(--muted-foreground); }
-.border-default { border-color: var(--border); }
-.bg-card { background: var(--card); }
-.text-foreground { color: var(--foreground); }
-.border-border { border-color: var(--border); }
-/* Agrega esto en tu archivo app/globals.css */
-
-.btn-secondary{
-  border-color: color-mix(in oklch, var(--secondary) 35%, transparent);
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-}
-.btn-secondary:hover{
-  background: color-mix(in oklch, var(--secondary) 88%, black);
-}
-
-.btn-danger{
-  border-color: color-mix(in oklch, var(--destructive) 35%, transparent);
-  background: var(--destructive);
-  color: var(--destructive-foreground);
-}
-.btn-danger:hover{
-  background: color-mix(in oklch, var(--destructive) 88%, black);
 }
