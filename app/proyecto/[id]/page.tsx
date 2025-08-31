@@ -83,7 +83,7 @@ export default function ProyectoDetallePage() {
         </div>
         <div className="flex items-center space-x-2">
             <Link className="btn btn-secondary" href={`/proyecto/${p.id}/export`}>
-              Vista Previa
+              Vista Previa (Imprimir / PDF)
             </Link>
             <button className="btn btn-primary" onClick={handleDownloadPdf}>
               Descargar PDF
