@@ -23,6 +23,7 @@ import type {
 import type { MaterialRow, MaterialUnit } from "@/lib/project/types";
 import AyudanteCaida from "@/components/electrica/AyudanteCaida";
 import HelpPopover from "@/components/ui/HelpPopover";
+import InputNumerico from "@/components/ui/InputNumerico";
 
 type CanalId = string;
 type TipoCircuitoId = string;
@@ -410,15 +411,15 @@ export default function ElectricaPage() {
 
         {alimOn && (
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5">
-            <label className="flex flex-col gap-1 text-sm">
+            <div className="flex flex-col gap-1 text-sm">
               <div className="flex items-center">
                 <span className="font-medium">Distancia (m)</span>
                 <HelpPopover>
                   Introduce la longitud real del cable desde el medidor o pilar hasta el tablero principal de la vivienda.
                 </HelpPopover>
               </div>
-              <input type="number" step="0.1" className="input" value={alimDist} onChange={(e) => setAlimDist(Number(e.target.value || 0))} />
-            </label>
+              <InputNumerico value={alimDist} onChange={(v) => setAlimDist(v === "" ? 0 : v)} step={0.1} />
+            </div>
 
             <label className="flex flex-col gap-1 text-sm md:col-span-2">
               <div className="flex items-center">
@@ -432,35 +433,35 @@ export default function ElectricaPage() {
               </select>
             </label>
 
-            <label className="flex flex-col gap-1 text-sm">
+            <div className="flex flex-col gap-1 text-sm">
               <div className="flex items-center">
                 <span className="font-medium">ΔU máx. (%)</span>
                 <HelpPopover>
                   Es la caída de tensión máxima permitida. Un valor recomendado es 2% para asegurar que los equipos funcionen correctamente.
                 </HelpPopover>
               </div>
-              <input type="number" step="0.1" className="input" value={alimCaida} onChange={(e) => setAlimCaida(Number(e.target.value || 2))} />
-            </label>
+              <InputNumerico value={alimCaida} onChange={(v) => setAlimCaida(v === "" ? 2 : v)} step={0.1} />
+            </div>
             
-            <label className="flex flex-col gap-1 text-sm">
+            <div className="flex flex-col gap-1 text-sm">
               <div className="flex items-center">
                 <span className="font-medium">Demanda global</span>
                  <HelpPopover>
                   Factor de simultaneidad para toda la instalación (0 a 1). Estima qué porcentaje de la carga total funcionará al mismo tiempo. Un valor típico para viviendas es 0.8.
                 </HelpPopover>
               </div>
-              <input type="number" min="0" max="1" step="0.05" className="input" value={alimDemanda} onChange={(e) => setAlimDemanda(Math.max(0, Math.min(1, Number(e.target.value))))} />
-            </label>
+              <InputNumerico value={alimDemanda} onChange={(v) => setAlimDemanda(v === "" ? 0 : Math.max(0, Math.min(1, v)))} min={0} max={1} step={0.05} />
+            </div>
 
-            <label className="flex flex-col gap-1 text-sm">
+            <div className="flex flex-col gap-1 text-sm">
                <div className="flex items-center">
                 <span className="font-medium">cos φ global</span>
                 <HelpPopover>
                   Factor de potencia general de la instalación. Si no estás seguro, 0.9 es un valor seguro y habitual para estimaciones residenciales.
                 </HelpPopover>
               </div>
-              <input type="number" step="0.01" className="input" value={alimPf} onChange={(e) => setAlimPf(Number(e.target.value || 0.9))} />
-            </label>
+              <InputNumerico value={alimPf} onChange={(v) => setAlimPf(v === "" ? 0.9 : v)} step={0.01} />
+            </div>
           </div>
         )}
       </div>
@@ -525,15 +526,15 @@ export default function ElectricaPage() {
                   <select className="select" value={c.tipoId} onChange={(e) => updateCircuito(c.id, { tipoId: e.target.value as TipoCircuitoId })}>{tipos.map(t => (<option key={t.id} value={t.id}>{t.nombre}</option>))}</select>
                 </label>
 
-                <label className="flex flex-col gap-1 text-sm">
+                <div className="flex flex-col gap-1 text-sm">
                   <div className="flex items-center">
                     <span className="font-medium">Longitud (m)</span>
                     <HelpPopover>
                       Distancia en metros desde el tablero hasta el punto de consumo más lejano del circuito. La app calcula el retorno automáticamente.
                     </HelpPopover>
                   </div>
-                  <input type="number" step="0.1" className="input" value={c.longitud_m} onChange={(e) => updateCircuito(c.id, { longitud_m: Number(e.target.value || 0) })}/>
-                </label>
+                  <InputNumerico value={c.longitud_m} onChange={(v) => updateCircuito(c.id, { longitud_m: v === "" ? 0 : v })} step={0.1} />
+                </div>
 
                 <label className="flex flex-col gap-1 text-sm">
                   <div className="flex items-center">
@@ -558,33 +559,33 @@ export default function ElectricaPage() {
 
               {c.modo === "potencia" && (
                 <div className="pt-4 border-t border-border grid gap-4 sm:grid-cols-3">
-                  <label className="flex flex-col gap-1 text-sm">
+                  <div className="flex flex-col gap-1 text-sm">
                     <div className="flex items-center">
                       <span className="font-medium">Potencia (W)</span>
                       <HelpPopover>
                         Suma total de la potencia en Watts de todas las cargas que estarán en este circuito.
                       </HelpPopover>
                     </div>
-                    <input type="number" step="1" className="input" value={c.potencia_w} onChange={(e) => updateCircuito(c.id, { potencia_w: Number(e.target.value || 0) })} />
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm">
+                    <InputNumerico value={c.potencia_w} onChange={(v) => updateCircuito(c.id, { potencia_w: v === "" ? 0 : v })} step={1} />
+                  </div>
+                  <div className="flex flex-col gap-1 text-sm">
                     <div className="flex items-center">
                       <span className="font-medium">cos φ</span>
                        <HelpPopover>
                         Factor de potencia del circuito. Para cargas resistivas es 1. Para motores o LEDs, suele estar entre 0.85 y 0.95. Si dudas, deja el valor por defecto.
                       </HelpPopover>
                     </div>
-                    <input type="number" step="0.01" className="input" value={c.pf ?? ""} onChange={(e) => updateCircuito(c.id, { pf: e.target.value === "" ? undefined : Number(e.target.value) })} placeholder="Ej: 0.95"/>
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm">
+                    <InputNumerico value={c.pf ?? ""} onChange={(v) => updateCircuito(c.id, { pf: v === "" ? undefined : v })} step={0.01} placeholder="Ej: 0.95" />
+                  </div>
+                  <div className="flex flex-col gap-1 text-sm">
                     <div className="flex items-center">
                       <span className="font-medium">Simultaneidad (0..1)</span>
                       <HelpPopover>
                         Estima qué porcentaje de la potencia de este circuito estará funcionando a la vez. 1 significa el 100%, 0.6 significa el 60%.
                       </HelpPopover>
                     </div>
-                    <input type="number" step="0.05" min="0" max="1" className="input" value={c.simultaneidad ?? 1} onChange={(e) => updateCircuito(c.id, { simultaneidad: Math.max(0, Math.min(1, Number(e.target.value))) })}/>
-                  </label>
+                    <InputNumerico value={c.simultaneidad ?? 1} onChange={(v) => updateCircuito(c.id, { simultaneidad: v === "" ? 1 : Math.max(0, Math.min(1, v))})} step={0.05} min={0} max={1} />
+                  </div>
                 </div>
               )}
 
@@ -596,7 +597,7 @@ export default function ElectricaPage() {
                       <div key={row.id} className="grid gap-2 md:grid-cols-6 items-end">
                         <label className="flex flex-col gap-1 text-sm md:col-span-2"><span className="font-medium text-xs">Grupo</span><select className="select" value={row.grupo} onChange={(e) => updateArtefactoRow(c.id, row.id, { grupo: e.target.value as Grupo, articuloId: "" })}><option value="iluminacion">Iluminación</option><option value="tomas">Tomas</option><option value="fijos">Fijos</option></select></label>
                         <label className="flex flex-col gap-1 text-sm md:col-span-3"><span className="font-medium text-xs">Artefacto</span><select className="select" value={row.articuloId} onChange={(e) => updateArtefactoRow(c.id, row.id, { articuloId: e.target.value })}><option value="">-- seleccionar --</option>{(row.grupo === "iluminacion" ? arts.iluminacion : row.grupo === "fijos" ? arts.fijos : arts.tomas).map(a => (<option key={a.id} value={a.id}>{a.nombre} ({a.W} W)</option>))}</select></label>
-                        <label className="flex flex-col gap-1 text-sm"><span className="font-medium text-xs">Cant.</span><input type="number" min="1" step="1" className="input" value={row.cantidad} onChange={(e) => updateArtefactoRow(c.id, row.id, { cantidad: Math.max(1, Number(e.target.value || 1)), })}/></label>
+                        <div className="flex flex-col gap-1 text-sm"><span className="font-medium text-xs">Cant.</span><InputNumerico value={row.cantidad} onChange={(v) => updateArtefactoRow(c.id, row.id, { cantidad: Math.max(1, v === "" ? 1 : v) })} min={1} step={1} /></div>
                         <div className="md:col-span-6"><button className="btn btn-danger text-xs py-1 px-2 h-auto" onClick={() => removeArtefactoRow(c.id, row.id)}>Quitar línea</button></div>
                       </div>
                     ))}
